@@ -1,0 +1,41 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.assignment-card {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+    border-color: lighten($color-border, 10%);
+  }
+
+  &__header {
+    @include flex-between;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    margin-right: 1rem;
+    color: $color-text;
+  }
+
+  &__desc {
+    color: $color-text-muted;
+    font-size: 0.875rem;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

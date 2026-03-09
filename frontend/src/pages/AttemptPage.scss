@@ -1,0 +1,153 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.attempt-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px); // subtract main-header mostly
+
+  &__header {
+    margin-bottom: 1rem;
+    
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: $color-text-muted;
+
+      a {
+        color: $color-primary;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .current-title {
+        color: $color-text;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex-grow: 1;
+
+  @include respond-to(md) {
+    flex-direction: row;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @include respond-to(md) {
+      width: 40%;
+      min-width: 350px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+
+      // Custom scrollbar
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background-color: $color-border;
+        border-radius: $radius-md;
+      }
+    }
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @include respond-to(md) {
+      width: 60%;
+      height: 100%;
+    }
+  }
+}
+
+// Question Panel specific styles
+.question-panel {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    @include flex-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $color-border;
+    background-color: rgba($color-primary, 0.05);
+
+    h2 {
+      font-size: 1.125rem;
+      margin: 0;
+      color: $color-text;
+    }
+  }
+
+  &__content {
+    padding: 1.25rem;
+
+    .question-text {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .expected-output {
+      font-size: 0.875rem;
+      background-color: rgba(#fff, 0.05);
+      padding: 1rem;
+      border-radius: $radius-md;
+      border-left: 3px solid $color-primary;
+
+      strong {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: $color-text-muted;
+      }
+      
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Containers
+.viewer-container {
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.hint-container {
+  min-height: 200px;
+  flex-shrink: 0;
+}
+
+.editor-container {
+  height: 50vh;
+  @include respond-to(md) {
+    height: 60%;
+  }
+}
+
+.results-container {
+  flex-grow: 1;
+  min-height: 300px;
+  
+  @include respond-to(md) {
+    height: 40%;
+  }
+}

@@ -1,0 +1,85 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.sample-data {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header {
+    background-color: $color-surface-light;
+    border-bottom: 1px solid $color-border;
+    border-radius: $radius-md $radius-md 0 0;
+
+    h3 {
+      font-size: 0.875rem;
+      padding: 0.75rem 1rem;
+      margin: 0;
+      color: $color-text-muted;
+      border-bottom: 1px solid $color-border;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      padding: 0 0.5rem;
+      
+      .tab-btn {
+        @include button-reset;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        color: $color-text-muted;
+        border-bottom: 2px solid transparent;
+
+        &:hover {
+          color: $color-text;
+        }
+
+        &.active {
+          color: $color-primary;
+          border-bottom-color: $color-primary;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  &__content {
+    flex-grow: 1;
+    overflow: auto;
+    
+    .table-responsive {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+        font-family: $font-mono;
+
+        th {
+          background-color: rgba($color-surface, 0.5);
+          color: $color-text;
+          font-weight: 600;
+          text-align: left;
+          padding: 0.5rem 1rem;
+          border-bottom: 1px solid $color-border;
+        }
+
+        td {
+          padding: 0.5rem 1rem;
+          border-bottom: 1px dashed rgba($color-border, 0.5);
+          color: $color-text-muted;
+        }
+      }
+    }
+
+    .no-data {
+      padding: 2rem;
+      text-align: center;
+      color: $color-text-muted;
+      font-style: italic;
+    }
+  }
+}

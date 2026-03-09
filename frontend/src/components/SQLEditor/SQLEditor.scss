@@ -1,0 +1,28 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.sql-editor {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  &__header {
+    @include flex-between;
+    padding: 1rem;
+    border-bottom: 1px solid $color-border;
+    background-color: rgba(#000, 0.2);
+
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+
+  &__container {
+    flex-grow: 1;
+    min-height: 250px;
+    background-color: #1e1e1e; // VS Code Dark default
+  }
+}

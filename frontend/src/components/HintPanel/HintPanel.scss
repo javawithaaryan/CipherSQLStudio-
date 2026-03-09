@@ -1,0 +1,62 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.hint-panel {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  &__header {
+    @include flex-between;
+    padding: 1rem;
+    border-bottom: 1px solid $color-border;
+    
+    h3 {
+      font-size: 1rem;
+      margin: 0;
+      color: $color-warning;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &::before {
+        content: '✨';
+      }
+    }
+  }
+
+  &__content {
+    padding: 1rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    
+    .placeholder {
+      color: $color-text-muted;
+      text-align: center;
+      font-size: 0.875rem;
+      font-style: italic;
+      margin-top: 1rem;
+    }
+
+    .error {
+      color: $color-error;
+      font-size: 0.875rem;
+    }
+    
+    .hint-bubble {
+      background: linear-gradient(145deg, rgba($color-warning, 0.1), rgba($color-warning, 0.05));
+      border: 1px solid rgba($color-warning, 0.2);
+      border-radius: $radius-md;
+      padding: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: lighten($color-warning, 20%);
+      position: relative;
+      
+      p {
+        margin: 0;
+      }
+    }
+  }
+}

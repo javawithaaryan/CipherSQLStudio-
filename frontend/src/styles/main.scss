@@ -1,0 +1,96 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'reset';
+
+// Global shared styles and utilities
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.btn {
+  @include button-reset;
+  background-color: $color-primary;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-md;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+
+  &--secondary {
+    background-color: transparent;
+    border: 1px solid $color-border;
+    color: $color-text;
+
+    &:hover {
+      background-color: $color-surface-light;
+    }
+  }
+
+  &--danger {
+    background-color: $color-error;
+    &:hover {
+      background-color: darken($color-error, 10%);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Layout helper classes
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.mt-2 { margin-top: 1rem; }
+.mt-4 { margin-top: 2rem; }
+
+// Badge
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: $radius-sm;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &--easy {
+    background-color: rgba($color-success, 0.2);
+    color: lighten($color-success, 10%);
+  }
+
+  &--medium {
+    background-color: rgba($color-warning, 0.2);
+    color: $color-warning;
+  }
+
+  &--hard {
+    background-color: rgba($color-error, 0.2);
+    color: lighten($color-error, 10%);
+  }
+}
+
+// Header
+.main-header {
+  @include flex-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid $color-border;
+  margin-bottom: 2rem;
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $color-primary;
+    letter-spacing: -0.02em;
+  }
+}

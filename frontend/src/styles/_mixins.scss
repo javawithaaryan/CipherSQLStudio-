@@ -1,0 +1,34 @@
+@use 'variables' as *;
+
+@mixin respond-to($bp) {
+  @if $bp == sm { @media (min-width: 641px) { @content; } }
+  @if $bp == md { @media (min-width: 1024px) { @content; } }
+  @if $bp == lg { @media (min-width: 1281px) { @content; } }
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin card-surface {
+  background-color: $color-surface;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  border: 1px solid $color-border;
+}
+
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}

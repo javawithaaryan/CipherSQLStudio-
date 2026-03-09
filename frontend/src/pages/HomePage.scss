@@ -1,0 +1,53 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.home-page {
+  &__hero {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, rgba($color-primary, 0.2) 0%, rgba($color-surface, 0) 100%);
+    border-radius: $radius-lg;
+    border: 1px solid rgba($color-primary, 0.2);
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    p {
+      color: $color-text-muted;
+      font-size: 1.125rem;
+    }
+  }
+
+  .assignment-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @include respond-to(sm) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @include respond-to(lg) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .loading, .error-msg, .no-data {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.125rem;
+    color: $color-text-muted;
+  }
+
+  .error-msg {
+    color: $color-error;
+  }
+}
