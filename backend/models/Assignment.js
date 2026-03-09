@@ -5,9 +5,27 @@ const assignmentSchema = new mongoose.Schema({
   description: { type: String },
   difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'], required: true },
   question: { type: String, required: true },
-  expectedOutput: { type: String },
-  tables: [{ type: String }],
-  createdAt: { type: Date, default: Date.now }
+  
+  sampleTables: [
+    {
+      tableName: String,
+      columns: [
+        {
+          columnName: String,
+          dataType: String  
+        }
+      ],
+      rows: [] // Flexible Mixed Type Array
+    }
+  ],
+
+  expectedOutput: {
+    type: { type: String }, 
+    value: mongoose.Schema.Types.Mixed 
+  },
+
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Assignment', assignmentSchema);
