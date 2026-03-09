@@ -9,7 +9,9 @@ const api = axios.create({
 
 export const getAssignments = () => api.get('/assignments');
 export const getAssignmentById = (id) => api.get(`/assignments/${id}`);
-export const executeQuery = (query, assignmentId) => api.post('/query/execute', { query, assignmentId });
+export const startAssignment = (id, userId) => api.post(`/assignments/${id}/start`, { userId });
+export const finishAssignment = (id, userId) => api.post(`/assignments/${id}/finish`, { userId });
+export const executeQuery = (query, userId) => api.post('/query/execute', { query, userId });
 export const getHint = (question, userQuery) => api.post('/hints', { question, userQuery });
 
 export default api;

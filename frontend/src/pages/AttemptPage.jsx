@@ -4,32 +4,53 @@ import SQLEditor from '../components/SQLEditor/SQLEditor';
 import ResultsPanel from '../components/ResultsPanel/ResultsPanel';
 import HintPanel from '../components/HintPanel/HintPanel';
 import SampleDataViewer from '../components/SampleDataViewer/SampleDataViewer';
-import { getAssignmentById, executeQuery } from '../services/api';
+import { getAssignmentById, executeQuery, startAssignment, finishAssignment } from '../services/api';
 import './AttemptPage.scss';
 
 const AttemptPage = () => {
   const { id } = useParams();
+  const [userId] = useState(() => 'user_' + Math.random().toString(36).substr(2, 9));
+  
   const [assignment, setAssignment] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingWorkspace, setLoadingWorkspace] = useState(true);
+  
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  
   const [error, setError] = useState('');
   const [queryError, setQueryError] = useState('');
 
   useEffect(() => {
-    const fetchDoc = async () => {
+    let isMounted = true;
+    
+    const initializeWorkspace = async () => {
       try {
         const res = await getAssignmentById(id);
-        setAssignment(res.data);
+        if (isMounted) setAssignment(res.data);
+        
+        // Spin up isolated PostgreSQL schema with the sample tables
+        await startAssignment(id, userId);
+        if (isMounted) setLoadingWorkspace(false);
+
       } catch (err) {
-        setError('Failed to load assignment details.');
+        if (isMounted) setError('Failed to initialize workspace or load assignment.');
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
-    fetchDoc();
-  }, [id]);
+    
+    initializeWorkspace();
+
+    // Cleanup workspace strictly on unmount
+    return () => {
+      isMounted = false;
+      // using navigator.sendBeacon is safer for unmount networking, 
+      // but fetch works reliably to hit /finish API since it's asynchronous
+      finishAssignment(id, userId).catch(e => console.error("Workspace cleanup failed", e));
+    };
+  }, [id, userId]);
 
   const handleExecute = async () => {
     if (!query.trim()) return;
@@ -39,7 +60,7 @@ const AttemptPage = () => {
     setResults(null);
     
     try {
-      const res = await executeQuery(query, id);
+      const res = await executeQuery(query, userId); // Use strictly isolated schema via userId
       setResults(res.data);
     } catch (err) {
       setQueryError(err.response?.data?.error || err.message);
@@ -48,7 +69,15 @@ const AttemptPage = () => {
     }
   };
 
-  if (loading) return <div className="loading">Loading workspace...</div>;
+  if (loading || loadingWorkspace) {
+    return (
+      <div className="loading">
+        <h2>{loading ? 'Loading assignment details...' : 'Spinning up isolated PostgreSQL schema...'}</h2>
+        <p>Please wait while we initialize your secure environment.</p>
+      </div>
+    );
+  }
+  
   if (error) return <div className="error-msg">{error}</div>;
   if (!assignment) return <div className="error-msg">Assignment not found</div>;
 
@@ -76,15 +105,18 @@ const AttemptPage = () => {
             <div className="question-panel__content">
               <p className="question-text">{assignment.question}</p>
               
-              <div className="expected-output">
-                <strong>Expected Objective:</strong>
-                <p>{assignment.expectedOutput}</p>
-              </div>
+              {assignment.expectedOutput && (
+                <div className="expected-output">
+                  <strong>Expected Objective:</strong>
+                  <p>Check your logic carefully. We expect a type of: {assignment.expectedOutput.type}</p>
+                </div>
+              )}
             </div>
           </div>
 
           <div className="viewer-container">
-            <SampleDataViewer tables={assignment.tables} />
+            {/* Displaying Sample Tables directly from MongoDB Assignment object */}
+            <SampleDataViewer sampleTables={assignment.sampleTables} />
           </div>
 
           <div className="hint-container">
