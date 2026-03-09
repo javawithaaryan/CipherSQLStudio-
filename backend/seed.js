@@ -2,6 +2,36 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const pool = require('./config/postgres');
 const Assignment = require('./models/Assignment');
+const UserProgress = require('./models/UserProgress');
+
+const employeesTableColumns = [
+  { columnName: 'id', dataType: 'SERIAL PRIMARY KEY' },
+  { columnName: 'name', dataType: 'VARCHAR(100)' },
+  { columnName: 'department', dataType: 'VARCHAR(50)' },
+  { columnName: 'salary', dataType: 'NUMERIC' },
+  { columnName: 'hire_date', dataType: 'DATE' }
+];
+
+const employeesTableRows = [
+  { name: 'Alice Smith', department: 'Engineering', salary: 120000, hire_date: '2021-03-15' },
+  { name: 'Bob Jones',   department: 'Engineering', salary: 85000,  hire_date: '2022-01-10' },
+  { name: 'Charlie Davis', department: 'Sales',      salary: 75000,  hire_date: '2020-11-20' },
+  { name: 'Diana Prince', department: 'Engineering', salary: 140000, hire_date: '2019-06-05' },
+  { name: 'Evan Wright',  department: 'HR',          salary: 65000,  hire_date: '2023-02-01' }
+];
+
+const departmentsTableColumns = [
+  { columnName: 'id', dataType: 'SERIAL PRIMARY KEY' },
+  { columnName: 'name', dataType: 'VARCHAR(50)' },
+  { columnName: 'location', dataType: 'VARCHAR(100)' },
+  { columnName: 'budget', dataType: 'NUMERIC' }
+];
+
+const departmentsTableRows = [
+  { name: 'Engineering', location: 'San Francisco', budget: 5000000 },
+  { name: 'Sales',       location: 'New York',      budget: 2000000 },
+  { name: 'HR',          location: 'Chicago',       budget: 500000 }
+];
 
 const assignmentsSeed = [
   {
@@ -9,24 +39,62 @@ const assignmentsSeed = [
     description: "Learn how to select all data from a table.",
     difficulty: "Easy",
     question: "Write a query to retrieve all columns for all employees in the 'employees' table.",
-    expectedOutput: "A complete list of all employees with their id, name, department, salary, and hire_date.",
-    tables: ["employees"]
+    
+    sampleTables: [
+      {
+        tableName: 'employees',
+        columns: employeesTableColumns,
+        rows: employeesTableRows
+      }
+    ],
+
+    expectedOutput: {
+      type: "table",
+      value: employeesTableRows // conceptual mock
+    }
   },
   {
     title: "High Earners in Engineering",
     description: "Filter data based on multiple conditions.",
     difficulty: "Medium",
     question: "Retrieve the names and salaries of employees in the 'Engineering' department who earn more than 80000.",
-    expectedOutput: "A list of employee names and their salaries, strictly for those in Engineering earning > 80k.",
-    tables: ["employees"]
+    
+    sampleTables: [
+      {
+        tableName: 'employees',
+        columns: employeesTableColumns,
+        rows: employeesTableRows
+      }
+    ],
+
+    expectedOutput: {
+      type: "table",
+      value: [] // generic placeholder
+    }
   },
   {
     title: "Department Budgets per Location",
     description: "Join tables and aggregate data.",
     difficulty: "Hard",
     question: "Write a query across 'employees' and 'departments' to find the total salary being paid out by location.",
-    expectedOutput: "A list showing location and the SUM of salaries for employees located there.",
-    tables: ["employees", "departments"]
+    
+    sampleTables: [
+      {
+        tableName: 'employees',
+        columns: employeesTableColumns,
+        rows: employeesTableRows
+      },
+      {
+        tableName: 'departments',
+        columns: departmentsTableColumns,
+        rows: departmentsTableRows
+      }
+    ],
+
+    expectedOutput: {
+      type: "table",
+      value: []
+    }
   }
 ];
 
@@ -35,57 +103,18 @@ const seedDBs = async () => {
     console.log("Connecting to MongoDB...");
     await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ciphersqlstudio");
     
-    console.log("Clearing old MongoDB assignments...");
+    console.log("Clearing old MongoDB assignments and user progress...");
     await Assignment.deleteMany({});
+    await UserProgress.deleteMany({});
     
     console.log("Seeding MongoDB assignments...");
     await Assignment.insertMany(assignmentsSeed);
-    console.log("MongoDB seeded successfully!");
+    console.log("MongoDB seeded successfully with embedded sampleTables!");
 
-    console.log("Connecting to PostgreSQL...");
-    // Create tables
-    await pool.query(`
-      DROP TABLE IF EXISTS employees CASCADE;
-      DROP TABLE IF EXISTS departments CASCADE;
+    // No need to seed PostgreSQL directly anymore!
+    // PostgreSQL is now purely an isolated execution sandbox mapped per userId
+    console.log("PostgreSQL setup is now handled dynamically per user via sandboxService during /start");
 
-      CREATE TABLE departments (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(50),
-        location VARCHAR(100),
-        budget NUMERIC
-      );
-
-      CREATE TABLE employees (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100),
-        department VARCHAR(50),
-        salary NUMERIC,
-        hire_date DATE
-      );
-    `);
-
-    console.log("PostgreSQL tables created. Seeding data...");
-    
-    // Seed Departments
-    await pool.query(`
-      INSERT INTO departments (name, location, budget) VALUES
-      ('Engineering', 'San Francisco', 5000000),
-      ('Sales', 'New York', 2000000),
-      ('HR', 'Chicago', 500000);
-    `);
-
-    // Seed Employees
-    await pool.query(`
-      INSERT INTO employees (name, department, salary, hire_date) VALUES
-      ('Alice Smith', 'Engineering', 120000, '2021-03-15'),
-      ('Bob Jones', 'Engineering', 85000, '2022-01-10'),
-      ('Charlie Davis', 'Sales', 75000, '2020-11-20'),
-      ('Diana Prince', 'Engineering', 140000, '2019-06-05'),
-      ('Evan Wright', 'HR', 65000, '2023-02-01');
-    `);
-
-    console.log("PostgreSQL seeded successfully!");
-    
     process.exit(0);
   } catch (err) {
     console.error("Seeding error:", err);
