@@ -66,6 +66,4 @@ npm run dev
     [Backend: DROP SCHEMA workspace_userId CASCADE]
     [Save attempt to MongoDB UserProgress collection]
 
-### Hand-Drawn Diagram
-![Data Flow Diagram](./diagram.jpg)
-*Hand-drawn diagram showing complete request-response cycle*
+
